@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⛈️ WeatherApp Italia - Meteo in Tempo Reale</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="lightning-overlay">
+        <div class="lightning flash-1"></div>
+        <div class="lightning flash-2"></div>
+        <div class="lightning flash-3"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>⛈️ WeatherApp Italia</h1>
+            <p class="subtitle">Meteo in tempo reale delle principali città italiane</p>
+        </header>
+        
+        <main class="main-content">
+            <div class="city-selector">
+                <h2>🏙️ Seleziona una città</h2>
+                <div class="city-buttons" id="cityButtons">
+                    <!-- I pulsanti verranno generati dinamicamente -->
+                </div>
+            </div>
+            
+            <div class="weather-display" id="weatherDisplay">
+                <div class="current-weather" id="currentWeather">
+                    <h3 id="currentCity">Seleziona una città</h3>
+                    <div class="temperature" id="temperature">--°C</div>
+                    <div class="weather-info" id="weatherInfo">
+                        <span id="weatherDescription">--</span>
+                        <span id="timestamp">--</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>📊 Andamento Temperature (14 giorni)</h3>
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="storm-spinner"></div>
+                <p>Caricamento dati meteo...</p>
+            </div>
+            
+            <div class="error" id="errorMessage"></div>
+        </main>
+        
+        <footer class="footer">
+            <p>🌩️ Powered by <a href="https://open-meteo.com" target="_blank">Open-Meteo API</a></p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
