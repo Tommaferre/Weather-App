@@ -1,0 +1,6 @@
+com\weatherapp\WeatherAppApplication.class
+com\weatherapp\controller\WeatherController.class
+com\weatherapp\model\WeatherData.class
+com\weatherapp\service\WeatherService.class
+com\weatherapp\service\WeatherService$1.class
+com\weatherapp\repository\WeatherRepository.class
