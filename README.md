@@ -8,7 +8,7 @@ Un'applicazione full-stack containerizzata che mostra il meteo in tempo reale de
 - **Backend Spring Boot** con database H2 integrato
 - **API REST** per dati meteo attuali e storici
 - **Grafici interattivi** con Chart.js per l'andamento delle temperature
-- **Containerizzazione completa** con Docker
+- **Containerizzazione completa** con Docker multi-stage
 - **Città supportate**: Roma, Milano, Napoli, Torino, Palermo, Genova, Bologna, Firenze, Venezia, Bari
 
 ## 🔧 Stack Tecnologico
@@ -30,7 +30,7 @@ Un'applicazione full-stack containerizzata che mostra il meteo in tempo reale de
 
 ### DevOps
 
-- **Docker** - Containerizzazione
+- **Docker** - Containerizzazione (multi-stage build)
 - **Docker Compose** - Orchestrazione
 
 ## 🚀 Installazione e Avvio
@@ -42,7 +42,7 @@ Un'applicazione full-stack containerizzata che mostra il meteo in tempo reale de
 
 ### Avvio Rapido
 
- **Clona il repository e avvia l'applicazione:**
+**Clona il repository e avvia l'applicazione:**
 
 ```bash
 docker-compose up --build
@@ -53,6 +53,47 @@ docker-compose up --build
 - Frontend: <http://localhost:8080>
 - API: <http://localhost:8080/api/meteo?city=Milano>
 - Console H2: <http://localhost:8080/h2-console>
+
+### Build manuale dell'immagine Docker
+
+Il progetto utilizza un **Dockerfile multi-stage** ottimizzato:
+
+```Dockerfile
+# Stage 1: Build
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/weather-app-italia-1.0.0.jar app.jar
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]
+```
+
+Per buildare manualmente:
+
+```bash
+docker build -t weather-app-italia .
+docker run -p 8080:8080 weather-app-italia
+```
+
+### Troubleshooting Docker Desktop (Windows)
+
+Se ricevi errori come:
+
+```
+ERROR: error during connect: Head "http://%2F%2F.%2Fpipe%2FdockerDesktopLinuxEngine/_ping": open //./pipe/dockerDesktopLinuxEngine: Impossibile trovare il file specificato.
+```
+
+- Assicurati che Docker Desktop sia avviato
+- Riavvia Docker Desktop o il PC
+- Verifica che Docker sia installato e aggiornato
+- Controlla i permessi di amministratore
 
 ## 📡 API Endpoints
 
@@ -168,14 +209,12 @@ docker-compose logs -f weather-app
 ### Esecuzione in Locale (senza Docker)
 
 ```bash
-cd backend
 mvn spring-boot:run
 ```
 
 ### Build Manuale
 
 ```bash
-cd backend
 mvn clean package
 java -jar target/weather-app-italia-1.0.0.jar
 ```
@@ -198,41 +237,3 @@ L'applicazione utilizza l'API gratuita di [Open-Meteo](https://open-meteo.com) p
 
 - Nessuna autenticazione richiesta
 - Rate limit generoso
-- Dati aggiornati ogni ora
-
-## 🔒 Sicurezza
-
-- **CORS** configurato per frontend
-- **Input validation** per parametri API
-- **Error handling** completo
-- **Resource limits** nei container
-
-## 🐛 Troubleshooting
-
-### Problemi Comuni
-
-1. **Porta 8080 occupata:**
-
-   ```bash
-   docker-compose down
-   sudo netstat -tulpn | grep :8080
-   ```
-
-2. **Errore di build:**
-
-   ```bash
-   docker-compose build --no-cache
-   ```
-
-3. **Problemi di connessione API:**
-   - Verificare la connessione internet
-   - Controllare i logs: `docker-compose logs weather-app`
-
-### Debug Database H2
-
-Accedere alla console H2:
-
-- URL: <http://localhost:8080/h2-console>
-- JDBC URL: `jdbc:h2:mem:weatherdb`
-- Username: `sa`
-- Password: `password`
